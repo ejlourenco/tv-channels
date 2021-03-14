@@ -1,20 +1,18 @@
 {
   "files": {
-    "main.css": "/tv-channels/static/css/main.dfb7b345.chunk.css",
-    "main.js": "/tv-channels/static/js/main.67e2591d.chunk.js",
-    "runtime-main.js": "/tv-channels/static/js/runtime-main.44129244.js",
-    "static/css/2.613b5f81.chunk.css": "/tv-channels/static/css/2.613b5f81.chunk.css",
-    "static/js/2.6bc891e0.chunk.js": "/tv-channels/static/js/2.6bc891e0.chunk.js",
-    "static/js/3.f3ed4573.chunk.js": "/tv-channels/static/js/3.f3ed4573.chunk.js",
+    "main.css": "/tv-channels/static/css/main.a71ad791.chunk.css",
+    "main.js": "/tv-channels/static/js/main.b1fbd5ed.chunk.js",
+    "runtime-main.js": "/tv-channels/static/js/runtime-main.ff3a9ad4.js",
+    "static/js/2.91b7d248.chunk.js": "/tv-channels/static/js/2.91b7d248.chunk.js",
+    "static/js/3.838962f9.chunk.js": "/tv-channels/static/js/3.838962f9.chunk.js",
     "index.html": "/tv-channels/index.html",
     "service-worker.js": "/tv-channels/service-worker.js",
-    "static/js/2.6bc891e0.chunk.js.LICENSE.txt": "/tv-channels/static/js/2.6bc891e0.chunk.js.LICENSE.txt"
+    "static/js/2.91b7d248.chunk.js.LICENSE.txt": "/tv-channels/static/js/2.91b7d248.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.44129244.js",
-    "static/css/2.613b5f81.chunk.css",
-    "static/js/2.6bc891e0.chunk.js",
-    "static/css/main.dfb7b345.chunk.css",
-    "static/js/main.67e2591d.chunk.js"
+    "static/js/runtime-main.ff3a9ad4.js",
+    "static/js/2.91b7d248.chunk.js",
+    "static/css/main.a71ad791.chunk.css",
+    "static/js/main.b1fbd5ed.chunk.js"
   ]
 }
