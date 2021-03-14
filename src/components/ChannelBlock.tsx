@@ -1,5 +1,8 @@
 import { PlayCircleOutlined } from "@ant-design/icons";
-import { Button, Card, Popover } from "antd";
+//import { Button, Card, Popover } from "antd";
+import Button from "antd/es/button";
+import Card from "antd/es/card/";
+import Popover from "antd/es/popover";
 import React from "react";
 import { Channel } from "../model/Model";
 

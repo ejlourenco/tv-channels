@@ -13,9 +13,12 @@ const exaustODataEndpoint = async (url: string, all = true): Promise<any> => {
   const response = await fetch(url);
   const decodedResponse = await response.json();
   const data = decodedResponse.value;
-  const nextLink = decodedResponse["odata.nextLink"];
+  const nextLink: string = decodedResponse["odata.nextLink"];
   if (nextLink && all) {
-    const nextData = await exaustODataEndpoint(nextLink, all);
+    const link = nextLink.startsWith("http://")
+      ? nextLink.split("http://").join("https://")
+      : nextLink;
+    const nextData = await exaustODataEndpoint(link, all);
     return [...data, ...nextData];
   } else {
     return data;
@@ -24,7 +27,7 @@ const exaustODataEndpoint = async (url: string, all = true): Promise<any> => {
 
 export const getChannels = async (): Promise<Channel[]> => {
   let channels: Channel[] = await exaustODataEndpoint(
-    "http://ott.online.meo.pt/catalog/v9/Channels?UserAgent=IPTV_OFR_AND&OfferId=21600543&$orderby=ChannelPosition%20asc&$inlinecount=allpages",
+    "https://ott.online.meo.pt/catalog/v9/Channels?UserAgent=IPTV_OFR_AND&OfferId=21600543&$orderby=ChannelPosition%20asc&$inlinecount=allpages",
     true
   );
   // channels = [channels[0], channels[1], channels[2], channels[3], channels[4]];
@@ -47,10 +50,8 @@ export const getChannelShows = async (
   const startDate = Moment(day).add(-1, "day").endOf("day").format(dateFormat);
   const endDate = Moment(day).add(1, "day").startOf("day").format(dateFormat);
   return await exaustODataEndpoint(
-    `http://ott.online.meo.pt/Program/v9/Programs?UserAgent=IOS&$orderby=StartDate%20asc&$filter=CallLetter%20eq%20%27${channel.CallLetter}%27%20and%20StartDate%20gt%20datetime%27${startDate}%27%20and%20StartDate%20lt%20datetime%27${endDate}%27%20and%20IsEnabled%20eq%20true%20and%20IsBlackout%20eq%20false&$inlinecount=allpages`
+    `https://ott.online.meo.pt/Program/v9/Programs?UserAgent=IOS&$orderby=StartDate%20asc&$filter=CallLetter%20eq%20%27${channel.CallLetter}%27%20and%20StartDate%20gt%20datetime%27${startDate}%27%20and%20StartDate%20lt%20datetime%27${endDate}%27%20and%20IsEnabled%20eq%20true%20and%20IsBlackout%20eq%20false&$inlinecount=allpages`
   );
-
-  // const result = await axios(`http://services.sapo.pt/EPG/GetChannelByDateInterval?channelSigla=${channelNick}&startDate=${startDate}&endDate=${endDate}`);
 };
 
 export const getInterval = (timeBlock: TimeBlock): Interval => {

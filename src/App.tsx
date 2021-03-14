@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { Input, Layout, Modal, Space } from "antd";
+import Input from "antd/es/input";
+import Layout from "antd/es/layout";
+import Modal from "antd/es/modal";
+import Space from "antd/es/space";
 import Moment from "moment";
 import { DayNavigator } from "./components/DayNavigator";
 import { HourNavigator } from "./components/HourNavigator";
 import { ChannelBlock } from "./components/ChannelBlock";
-import { Channel, Show, State, FilterOption } from "./model/Model";
+import { Channel, Show, State } from "./model/Model";
 import { ChannelShows } from "./components/ChannelShows";
 import {
   ALL_OPTION_VALUE,
@@ -15,8 +18,8 @@ import {
   getVideoUrl,
   useDebounce,
 } from "./utils/Utils";
-import { Select } from "antd";
-import Search from "antd/lib/transfer/search";
+// import { Select } from "antd";
+import Select from "antd/es/select";
 
 const { Option } = Select;
 
@@ -154,6 +157,7 @@ function App() {
           <a
             href={getVideoUrl(data.video.channel, data.video.show)}
             target="_blank"
+            rel="noreferrer"
           >
             Open in a new tab
           </a>
@@ -172,7 +176,9 @@ function App() {
               style={{ width: "8rem" }}
             >
               {data.thematic.options.map((option) => (
-                <Option value={option.value}>{option.title}</Option>
+                <Option key={option.value} value={option.value}>
+                  {option.title}
+                </Option>
               ))}
             </Select>
             <Input
