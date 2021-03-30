@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/tv-channels/static/css/main.a71ad791.chunk.css",
-    "main.js": "/tv-channels/static/js/main.b1fbd5ed.chunk.js",
+    "main.js": "/tv-channels/static/js/main.e5e9eb88.chunk.js",
     "runtime-main.js": "/tv-channels/static/js/runtime-main.ff3a9ad4.js",
     "static/js/2.91b7d248.chunk.js": "/tv-channels/static/js/2.91b7d248.chunk.js",
     "static/js/3.838962f9.chunk.js": "/tv-channels/static/js/3.838962f9.chunk.js",
@@ -13,6 +13,6 @@
     "static/js/runtime-main.ff3a9ad4.js",
     "static/js/2.91b7d248.chunk.js",
     "static/css/main.a71ad791.chunk.css",
-    "static/js/main.b1fbd5ed.chunk.js"
+    "static/js/main.e5e9eb88.chunk.js"
   ]
 }
