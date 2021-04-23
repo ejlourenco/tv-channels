@@ -1,5 +1,3 @@
-@import '~antd/dist/antd.css';
-
 .App__hours {
   display: flex;
   justify-content: space-between;

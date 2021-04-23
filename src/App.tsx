@@ -1,9 +1,6 @@
+import ReactGA from "react-ga";
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
-import Input from "antd/es/input";
-import Layout from "antd/es/layout";
-import Modal from "antd/es/modal";
-import Space from "antd/es/space";
 import Moment from "moment";
 import { DayNavigator } from "./components/DayNavigator";
 import { HourNavigator } from "./components/HourNavigator";
@@ -18,14 +15,11 @@ import {
   getVideoUrl,
   useDebounce,
 } from "./utils/Utils";
-// import { Select } from "antd";
-import Select from "antd/es/select";
 
-const { Option } = Select;
+const TRACKING_ID = "G-FCJCN6L53X"; // YOUR_OWN_TRACKING_ID
+ReactGA.initialize(TRACKING_ID);
 
-const { Header, Sider, Content } = Layout;
-
-const channelHeight = "3.4rem";
+const channelHeight = "3rem";
 
 const defaultState: State = {
   timeBlock: {
@@ -97,6 +91,13 @@ function App() {
   // @ts-ignore
   const hls = new Hls();
   const watchShow = (channel: Channel, show?: Show) => {
+    ReactGA.event({
+      category: "Show",
+      action: "Watch",
+      label: channel.Title + show ? " - " + show?.Title : "",
+      value: parseInt((show?.Time || "").split(":").join("") || ""),
+    });
+
     // do nothing
     setData({ ...data, video: { running: true, channel, show: show } });
     const url = getVideoUrl(channel, show);
@@ -112,7 +113,10 @@ function App() {
     }, 1000);
   };
   const stopVideo = () => {
-    // const video = vidRef.current;
+    ReactGA.event({
+      category: "Video",
+      action: "Back",
+    });
     hls.stopLoad();
     setData({ ...data, video: { running: false } });
   };
@@ -122,6 +126,12 @@ function App() {
   };
 
   const onFilterChange = (value: string) => {
+    ReactGA.event({
+      category: "Toolbar",
+      action: "Filter",
+      label: value,
+    });
+
     setData((data) => ({
       ...data,
       thematic: { ...data.thematic, value: value },
@@ -130,108 +140,140 @@ function App() {
 
   const getVisibleChannels = (): Channel[] => {
     const { value } = data.thematic;
-    return value && value !== ALL_OPTION_VALUE
-      ? data.channels.filter((channel) => channel.Thematic === value)
-      : data.channels;
+    const ret =
+      value && value !== ALL_OPTION_VALUE
+        ? data.channels.filter((channel) => channel.Thematic === value)
+        : data.channels;
+    // console.log({ ret });
+    return ret;
   };
 
   const onSearch = (e: React.FormEvent<HTMLElement>) => {
     // @ts-ignore
-    setData((data) => ({ ...data, highlight: e.target.value }));
+    const text = e.target.value;
+    ReactGA.event({
+      category: "Toolbar",
+      action: "Filter",
+      label: text,
+    });
+
+    setData((data) => ({ ...data, highlight: text }));
   };
 
   return (
     <>
-      <Modal
-        title={
-          data.video.channel?.Title + " - " + getShowTitle(data.video.show)
-        }
-        centered
-        visible={data.video.running}
-        onCancel={stopVideo}
-        destroyOnClose={true}
-        footer={null}
-      >
-        <video ref={vidRef} width="450" controls />
-        {data.video.channel !== undefined && (
-          <a
-            href={getVideoUrl(data.video.channel, data.video.show)}
-            target="_blank"
-            rel="noreferrer"
+      {data.video.running && (
+        <div>
+          {data.video.channel !== undefined && (
+            <p>
+              {data.video.channel?.Title}
+              {data.video.show !== undefined && (
+                <>
+                  <br />
+                  {data.video.show.Title}
+                </>
+              )}
+            </p>
+          )}
+          <video ref={vidRef} width="450" controls />
+          {data.video.channel !== undefined && (
+            <>
+              <br />
+              <a
+                href={getVideoUrl(data.video.channel, data.video.show)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open in a new tab
+              </a>
+            </>
+          )}
+          {data.video.show !== undefined && <p>{data.video.show.Synopsis}</p>}
+          <button onClick={stopVideo}>back</button>
+        </div>
+      )}
+      {!data.video.running && (
+        <div style={{ overflowX: "hidden" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "10rem 20rem 1fr",
+              gap: "1rem",
+              height: "2rem",
+              padding: "0.5rem",
+              backgroundColor: "black",
+            }}
           >
-            Open in a new tab
-          </a>
-        )}
-      </Modal>
-      <Layout>
-        <Header>
-          <Space
-            align="center"
-            style={{ width: "100%", height: "100%", alignItems: "baseline" }}
-          >
-            <Select
+            <select
               // prefixCls={"Thematics"}
               value={data.thematic.value}
-              onChange={onFilterChange}
-              style={{ width: "8rem" }}
+              style={{ width: "100%" }}
+              onChange={(event: any) => onFilterChange(event.target.value)}
             >
               {data.thematic.options.map((option) => (
-                <Option key={option.value} value={option.value}>
+                <option key={option.value} value={option.value}>
                   {option.title}
-                </Option>
+                </option>
               ))}
-            </Select>
-            <Input
-              style={{ width: "16rem" }}
+            </select>
+            <input
+              style={{ width: "100%" }}
               placeholder="input search text to highlight shows"
               onChange={onSearch}
             />
-          </Space>
-        </Header>
-        <Layout>
-          <Sider theme="light">
+          </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "10rem calc(100vw - 10rem - 1px)",
+              gap: "1px",
+              alignContent: "center",
+              justifyContent: "center",
+              height: "2rem",
+            }}
+          >
             <DayNavigator date={data.timeBlock.StartDate} onAddDay={addDay} />
-          </Sider>
-          <Content>
             <HourNavigator
               hourInterval={data.timeBlock.Hours}
               date={data.timeBlock.StartDate}
               onAddHour={addHour}
               onZoomChange={zoomChange}
             />
-          </Content>
-        </Layout>
-        <Layout
-          style={{
-            overflowY: "auto",
-            overflowX: "hidden",
-            height: "calc(100vh - 6rem)",
-          }}
-        >
-          <Sider theme="light">
-            {getVisibleChannels().map((channel) => (
-              <ChannelBlock
-                key={channel.Id}
-                channel={channel}
-                channelHeight={channelHeight}
-                onWatchShow={() => watchShow(channel)}
-              ></ChannelBlock>
-            ))}
-          </Sider>
-          <Content>
-            {getVisibleChannels().map((channel) => (
-              <ChannelShows
-                key={channel.Id}
-                channel={channel}
-                channelHeight={channelHeight}
-                timeBlock={data.timeBlock}
-                highlight={debouncedHighlight}
-                onWatchShow={watchShow}
-              ></ChannelShows>
-            ))}
-          </Content>
-        </Layout>
-      </Layout>
+          </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "10rem calc(100vw - 10rem - 1px)",
+              gap: "1px",
+              overflow: "hidden auto",
+              height: "calc(100vh - 5rem)",
+            }}
+          >
+            <div>
+              {getVisibleChannels().map((channel) => (
+                <ChannelBlock
+                  key={channel.Id}
+                  channel={channel}
+                  channelHeight={channelHeight}
+                  onWatchShow={() => watchShow(channel)}
+                ></ChannelBlock>
+              ))}
+            </div>
+            <div style={{ maxWidth: "100%" }}>
+              {getVisibleChannels().map((channel) => (
+                <ChannelShows
+                  key={channel.Id}
+                  channel={channel}
+                  channelHeight={channelHeight}
+                  timeBlock={data.timeBlock}
+                  highlight={debouncedHighlight}
+                  onWatchShow={watchShow}
+                ></ChannelShows>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

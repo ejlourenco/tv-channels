@@ -3,12 +3,12 @@ import { Channel, Interval, Show, TimeBlock } from "../model/Model";
 import { ShowBlock } from "./ShowBlock";
 import Moment from "moment";
 import { getChannelShows, getInterval, useOnScreen } from "../utils/Utils";
-import "./ChannelShows.css";
 
 const getShowPeriod = (show: Show): string => {
-  return `${Moment(show.StartDate).format("HH:mm")}-${Moment(
-    show.EndDate
-  ).format("HH:mm")}`;
+  const startDate = Moment(show.StartDate).format("HH:mm");
+  return `${startDate}`;
+  // const endDate = Moment(show.EndDate).format("HH:mm");
+  // return `${startDate}-${endDate}`;
 };
 
 const getWidthByShow = (
@@ -30,6 +30,15 @@ const getWidthByShow = (
   );
   const percentageDuration =
     durationMinutes === 0 ? 0 : (100 * durationMinutes) / hourInterval / 60;
+  // console.log({
+  //   StartDate,
+  //   EndDate,
+  //   programStartDate,
+  //   programEndDate,
+  //   durationMinutes,
+  //   percentageDuration,
+  //   hourInterval,
+  // });
   return `${percentageDuration}%`;
 };
 
@@ -89,11 +98,20 @@ export const ChannelShows = ({
       .sort((a, b) =>
         Moment(a.StartDate).isBefore(Moment(b.StartDate)) ? -1 : 1
       );
+    // console.log({ StartDate, EndDate, shows });
     return shows;
   };
 
   return (
-    <div ref={ref} className="ChannelShows__Content">
+    <div
+      ref={ref}
+      style={{
+        display: "flex",
+        maxWidth: "100%",
+        borderTop: "1px solid gray",
+        height: channelHeight,
+      }}
+    >
       {isOnScreen &&
         getVisibleShows().map((show) => (
           <ShowBlock
@@ -102,7 +120,6 @@ export const ChannelShows = ({
             synopsis={show.Synopsis}
             participants={show.Participants}
             width={getWidthByShow(show, interval, timeBlock.Hours)}
-            channelHeight={channelHeight}
             onWatchShow={() => onWatchShow(channel, show)}
             isPlayButtonVisible={
               Moment(show.StartDate).isBefore(Moment()) &&

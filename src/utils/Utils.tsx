@@ -118,9 +118,16 @@ export const getVideoUrl = (channel: Channel, show?: Show): string => {
   const { StartDate, EndDate } = show
     ? show
     : { StartDate: Moment(), EndDate: null };
-  const formattedStartDate = Moment(StartDate).format("YYYY-MM-DDTHH:mm:00");
-  const formattedEndDate = EndDate
-    ? Moment(EndDate).format("YYYY-MM-DDTHH:mm:00")
+  const formattedStartDate = Moment(StartDate)
+    .utc()
+    .format("YYYY-MM-DDTHH:mm:00");
+  const endDate = EndDate
+    ? Moment(EndDate).add(1, "hour").isAfter(Moment())
+      ? EndDate
+      : Moment(EndDate).add(1, "hour")
+    : null;
+  const formattedEndDate = endDate
+    ? Moment(endDate).utc().format("YYYY-MM-DDTHH:mm:00")
     : "END";
   return `http://213.13.23.76/wp/cdn-vspp-pcs1.online.meo.pt/shls/LIVE$${FriendlyUrlName}/index.m3u8?device=IOS_Live&start=${formattedStartDate}&end=${formattedEndDate}`;
 };
